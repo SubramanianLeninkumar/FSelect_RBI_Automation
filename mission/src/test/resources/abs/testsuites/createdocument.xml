@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="absmissiontest">
+    <parameter name="productName" value="abs"/>
+    <parameter name="url" value="https://uat-fselect.apps.eagle.org/"/>
+    <parameter name="username" value="oxpabs"/>
+    <parameter name="password" value="Abc12345!"/>
+    <parameter name="sheetName" value="conditionmanager"/>
+    <parameter name="flowName" value="Flow12"/>
+    <test name="Regression">
+        <classes>
+            <class name="com.abs.qa.test.LoginTest"/>
+            <class name="com.abs.qa.test.ClientSearchTest"/>
+            <class name="com.abs.qa.test.ConditionManagerTest"/>
+            <class name="com.abs.qa.test.CreateDocumentTest"/>
+        </classes>
+    </test>
+</suite>

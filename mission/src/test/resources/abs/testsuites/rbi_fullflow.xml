@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="MergedSuite">
+    <!-- Global Parameters -->
+    <parameter name="productName" value="abs"/>
+    <parameter name="url" value="https://uat-fselect.apps.eagle.org/"/>
+    <parameter name="username" value="oxpabs"/>
+    <parameter name="password" value="Abc12345!"/>
+    <parameter name="sheetName" value="anomaly"/>
+
+    <!-- Step 1: Common Tests -->
+    <test name="1-CommonTests">
+        <parameter name="flowName" value="Flow1"/>
+        <classes>
+            <class name="com.abs.qa.test.LoginTest"/>
+            <class name="com.abs.qa.test.ClientSearchTest"/>
+        </classes>
+    </test>
+
+    <!-- Step 2: Dashboard Tests -->
+    <test name="2-DashboardTest">
+        <parameter name="sheetName" value="dashboard"/>
+        <parameter name="flowName" value="Flow6"/>
+        <classes>
+            <class name="com.abs.qa.test.RBIOptionsOptionsTest"/>
+            <class name="com.abs.qa.test.RbiDashboardTest"/>
+        </classes>
+    </test>
+
+    <!-- Step 3: PlanScope Tests -->
+    <test name="3-PlanScopeTests">
+        <parameter name="sheetName" value="planscope"/>
+        <parameter name="flowName" value="Flow1"/>
+        <classes>
+            <class name="com.abs.qa.test.RBIOptionsOptionsTest"/>
+            <class name="com.abs.qa.test.PlanScopeTest"/>
+        </classes>
+    </test>
+
+    <!-- Step 4: Download PlanScope -->
+    <test name="4-DownloadPlanScope">
+        <parameter name="sheetName" value="planscope"/>
+        <parameter name="flowName" value="Flow2"/>
+        <classes>
+            <class name="com.abs.qa.test.PlanScopeTest"/>
+        </classes>
+    </test>
+
+    <!-- Step 5: Edit PlanScope -->
+    <test name="5-EditPlanScope">
+        <parameter name="sheetName" value="planscope"/>
+        <parameter name="flowName" value="Flow3"/>
+        <classes>
+            <class name="com.abs.qa.test.EditPlanScopeTest"/>
+        </classes>
+    </test>
+
+    <!-- Step 6: Get Anomaly Details -->
+    <test name="6-GetAnomalyDetails">
+        <parameter name="sheetName" value="anomaly"/>
+        <parameter name="flowName" value="Flow4"/>
+        <classes>
+            <class name="com.abs.qa.test.RBIOptionsOptionsTest"/>
+            <class name="com.abs.qa.test.EditAnomalyTest"/>
+        </classes>
+    </test>
+
+    <!-- Step 7: Download Anomaly Attachment -->
+    <test name="7-DownloadAnomalyAttachment">
+        <parameter name="sheetName" value="anomaly"/>
+        <parameter name="flowName" value="Flow5"/>
+        <classes>
+            <class name="com.abs.qa.test.AnomalyRegisterTest"/>
+        </classes>
+    </test>
+
+    <!-- Step 8: Download Anomaly Template -->
+    <test name="8-DownloadAnomalyTemplate">
+        <parameter name="sheetName" value="anomaly"/>
+        <parameter name="flowName" value="Flow3"/>
+        <classes>
+            <class name="com.abs.qa.test.AnomalyRegisterTest"/>
+        </classes>
+    </test>
+
+    <!-- Step 9: Create Anomaly -->
+    <test name="9-CreateAnomaly">
+        <parameter name="sheetName" value="anomaly"/>
+        <parameter name="flowName" value="Flow2"/>
+        <classes>
+            <class name="com.abs.qa.test.AnomalyFindingTest"/>
+            <class name="com.abs.qa.test.AnomalyAssessmentTest"/>
+            <class name="com.abs.qa.test.AnomalyPlanningTest"/>
+            <class name="com.abs.qa.test.AnomalyResolutionTest"/>
+        </classes>
+    </test>
+
+    <!-- Step 10: Edit Anomaly -->
+    <test name="10-EditAnomaly">
+        <parameter name="sheetName" value="anomaly"/>
+        <parameter name="flowName" value="Flow6"/>
+        <classes>
+            <class name="com.abs.qa.test.EditAnomalyFindingTest"/>
+            <class name="com.abs.qa.test.EditAnomalyAssessmentTest"/>
+            <class name="com.abs.qa.test.EditAnomalyPlanningTest"/>
+            <class name="com.abs.qa.test.EditAnomalyResolutionTest"/>
+        </classes>
+    </test>
+
+    <!-- Step 11: Anomaly Filters -->
+    <test name="11-AnomalyFilters">
+        <parameter name="sheetName" value="anomaly"/>
+        <parameter name="flowName" value="Flow1"/>
+        <classes>
+            <class name="com.abs.qa.test.AnomalyRegisterTest"/>
+        </classes>
+    </test>
+
+    <!-- Step 12: Create Meeting -->
+    <test name="12-CreateMeeting">
+        <parameter name="sheetName" value="meetings"/>
+        <parameter name="flowName" value="Flow4"/>
+        <classes>
+            <class name="com.abs.qa.test.RBIOptionsOptionsTest"/>
+            <class name="com.abs.qa.test.CreateMeetingsTest"/>
+        </classes>
+    </test>
+
+    <!-- Step 13: Download Meeting -->
+    <test name="13-DownloadMeeting">
+        <parameter name="sheetName" value="meetings"/>
+        <parameter name="flowName" value="Flow3"/>
+        <classes>
+            <class name="com.abs.qa.test.MeetingsTest"/>
+        </classes>
+    </test>
+
+    <!-- Step 14: Meeting Filters -->
+    <test name="14-MeetingFilters">
+        <parameter name="sheetName" value="meetings"/>
+        <parameter name="flowName" value="Flow5"/>
+        <classes>
+            <class name="com.abs.qa.test.MeetingsTest"/>
+        </classes>
+    </test>
+
+    <!-- Step 15: Edit Meeting -->
+    <test name="15-EditMeeting">
+        <parameter name="sheetName" value="meetings"/>
+        <parameter name="flowName" value="Flow2"/>
+        <classes>
+            <class name="com.abs.qa.test.EditMeetingsTest"/>
+        </classes>
+    </test>
+
+    <!-- Step 16: Meeting List -->
+    <test name="16-MeetingList">
+        <parameter name="sheetName" value="meetings"/>
+        <parameter name="flowName" value="Flow1"/>
+        <classes>
+            <class name="com.abs.qa.test.MeetingsTest"/>
+        </classes>
+    </test>
+</suite>
