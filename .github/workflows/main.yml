@@ -1,0 +1,73 @@
+name: Java CI with Gradle
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: self-hosted
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+
+    # Set the WORKSPACE environment variable
+    - name: Set WORKSPACE environment variable
+      run: echo "WORKSPACE=${GITHUB_WORKSPACE}" >> $GITHUB_ENV
+
+    # Step 2: Install Chrome on Windows
+    - name: Install Google Chrome
+      run: |
+        $chromeInstaller = "chrome_installer.exe"
+        Invoke-WebRequest -Uri "https://dl.google.com/chrome/install/latest/chrome_installer.exe" -OutFile $chromeInstaller
+        Start-Process -FilePath $chromeInstaller -Args "/silent /install" -NoNewWindow -Wait
+        Remove-Item $chromeInstaller -Force
+        $env:PATH += ";C:\Program Files\Google\Chrome\Application"
+   # Step 5: Fetch Latest Stable ChromeDriver version and download it
+    - name: Install Latest Stable ChromeDriver
+      run: |
+          # Fetch the latest stable Chrome version dynamically from Chrome for Testing
+          $chromeDriverVersionUrl = "https://googlechromelabs.github.io/chrome-for-testing/LATEST_RELEASE_STABLE"
+          $chromeDriverVersion = Invoke-WebRequest -Uri $chromeDriverVersionUrl -UseBasicParsing | Select-Object -First 1
+          Write-Host "Latest ChromeDriver Version: $chromeDriverVersion"
+          # Construct the download URL for ChromeDriver using the fetched Chrome version
+          $chromeDriverUrl = "https://storage.googleapis.com/chrome-for-testing-public/$chromeDriverVersion/win64/chromedriver-win64.zip"
+    
+          # Set temporary paths for download
+          $tempPath = [System.IO.Path]::GetTempPath()
+          $chromeDriverZipPath = Join-Path -Path $tempPath -ChildPath "chromedriver.zip"
+          $chromeDriverExtractPath = "C:\tools\chromedriver"
+
+          # Download ChromeDriver
+          Write-Host "Downloading ChromeDriver..."
+          Invoke-WebRequest -Uri $chromeDriverUrl -OutFile $chromeDriverZipPath -UseBasicParsing
+    
+          # Extract ChromeDriver with force overwrite option
+          Write-Host "Extracting ChromeDriver..."
+          Expand-Archive -Path $chromeDriverZipPath -DestinationPath $chromeDriverExtractPath -Force
+          Remove-Item -Path $chromeDriverZipPath  # Clean up the zip file
+
+          # Add ChromeDriver to PATH
+          [System.Environment]::SetEnvironmentVariable("PATH", "$env:PATH;C:\tools\chromedriver", [System.EnvironmentVariableTarget]::User)
+
+          # Verify ChromeDriver installation
+          chromedriver --version
+
+   # Step 6: Grant execute permission for Gradle wrapper (Windows-compatible method)
+    - name: Grant execute permission for Gradle wrapper (Windows)
+      run: |
+          $gradlewPath = "./gradlew"
+          icacls $gradlewPath /grant "Authenticated Users:(RX)"
+    # Run tests using Gradle Wrapper (Windows)
+    - name: Run Selenium tests
+      working-directory: mission
+      run: |
+        gradle clean test "-Dsuite.name=rbi_fullflow" --info
