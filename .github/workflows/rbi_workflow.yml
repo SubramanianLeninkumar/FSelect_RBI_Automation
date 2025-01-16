@@ -13,12 +13,6 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    # Step: Set Execution Policy to Bypass (for all users)
-    - name: Set Execution Policy to Bypass (for all users)
-      run: |
-        Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope LocalMachine -Force
-        echo "Execution Policy Set for all users"
-
     - name: Set up JDK 17
       uses: actions/setup-java@v4
       with:
