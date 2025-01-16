@@ -61,11 +61,11 @@ jobs:
           Write-Host "Listing files in $chromeDriverExtractPath"
           Get-ChildItem -Path $chromeDriverExtractPath
 
-          # Check if chromedriver_64 folder exists and move chromedriver.exe
-          if (Test-Path "$chromeDriverExtractPath\chromedriver_64\chromedriver.exe") {
-              Write-Host "Moving chromedriver.exe from chromedriver_64 folder..."
-              Move-Item "$chromeDriverExtractPath\chromedriver_64\chromedriver.exe" "$chromeDriverExtractPath\chromedriver.exe"
-              Remove-Item -Recurse -Force "$chromeDriverExtractPath\chromedriver_64"  # Clean up the folder
+          # Check if chromedriver.exe exists inside chromedriver-win64 folder
+          if (Test-Path "$chromeDriverExtractPath\chromedriver-win64\chromedriver.exe") {
+              Write-Host "Moving chromedriver.exe from chromedriver-win64 folder..."
+              Move-Item "$chromeDriverExtractPath\chromedriver-win64\chromedriver.exe" "$chromeDriverExtractPath\chromedriver.exe"
+              Remove-Item -Recurse -Force "$chromeDriverExtractPath\chromedriver-win64"  # Clean up the folder
           }
 
           # Add ChromeDriver to PATH (for the current session)
@@ -73,7 +73,7 @@ jobs:
 
           # Verify ChromeDriver installation
           Write-Host "Verifying ChromeDriver installation..."
-          $chromedriverVersion = & "$chromeDriverExtractPath\chromedriver.exe" --version
+          $chromedriverVersion = & "C:\tools\chromedriver\chromedriver.exe" --version
           Write-Host $chromedriverVersion
 
    # Step 6: Grant execute permission for Gradle wrapper (Windows-compatible method)
@@ -86,4 +86,4 @@ jobs:
     - name: Run Selenium tests
       working-directory: mission
       run: |
-        gradle clean test "-Dsuite.name=rbi_meetinglist" --info --debug
+        gradle clean test "-Dsuite.name=rbi_meetinglist" --info
