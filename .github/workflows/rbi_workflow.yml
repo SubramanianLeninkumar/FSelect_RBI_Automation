@@ -57,11 +57,20 @@ jobs:
           Expand-Archive -Path $chromeDriverZipPath -DestinationPath $chromeDriverExtractPath -Force
           Remove-Item -Path $chromeDriverZipPath  # Clean up the zip file
 
-          # Add ChromeDriver to PATH
-          [System.Environment]::SetEnvironmentVariable("PATH", "$env:PATH;C:\tools\chromedriver", [System.EnvironmentVariableTarget]::User)
+          # Check if chromedriver_64 folder exists and move chromedriver.exe
+          if (Test-Path "$chromeDriverExtractPath\chromedriver_64\chromedriver.exe") {
+              Write-Host "Moving chromedriver.exe from chromedriver_64 folder..."
+              Move-Item "$chromeDriverExtractPath\chromedriver_64\chromedriver.exe" "$chromeDriverExtractPath\chromedriver.exe"
+              Remove-Item -Recurse -Force "$chromeDriverExtractPath\chromedriver_64"  # Clean up the folder
+          }
+
+          # Add ChromeDriver to PATH (for the current session)
+          $env:PATH += ";C:\tools\chromedriver"
 
           # Verify ChromeDriver installation
-          chromedriver --version
+          Write-Host "Verifying ChromeDriver installation..."
+          $chromedriverVersion = & "C:\tools\chromedriver\chromedriver.exe" --version
+          Write-Host $chromedriverVersion
 
    # Step 6: Grant execute permission for Gradle wrapper (Windows-compatible method)
     - name: Grant execute permission for Gradle wrapper (Windows)
