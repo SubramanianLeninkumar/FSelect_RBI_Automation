@@ -19,6 +19,12 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
 
+    # Step: Set up Gradle
+    - name: Set up Gradle
+      uses: gradle/wrapper-validation-action@v2
+      with:
+        gradle-version: '8.12'  # Change to the version of Gradle you want
+
     # Set the WORKSPACE environment variable
     - name: Set WORKSPACE environment variable
       run: echo "WORKSPACE=${GITHUB_WORKSPACE}" >> $GITHUB_ENV
@@ -86,4 +92,4 @@ jobs:
     - name: Run Selenium tests
       working-directory: mission
       run: |
-        gradle clean test "-Dsuite.name=rbi_meetinglist" --info
+        gradle clean test "-Dsuite.name=rbi_fullflow" --info
