@@ -19,9 +19,9 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
 
-    # Step: Set up Gradle
+     # Step: Set up Gradle
     - name: Set up Gradle
-      uses: gradle/wrapper-validation-action@v2
+      uses: actions/setup-gradle@v2
       with:
         gradle-version: '8.12'  # Change to the version of Gradle you want
 
@@ -38,7 +38,6 @@ jobs:
         Remove-Item $chromeInstaller -Force
         $env:PATH += ";C:\Program Files\Google\Chrome\Application"
 
-   # Step 5: Fetch Latest Stable ChromeDriver version and download it
     - name: Install Latest Stable ChromeDriver
       run: |
           # Fetch the latest stable Chrome version dynamically from Chrome for Testing
@@ -67,12 +66,16 @@ jobs:
           Write-Host "Listing files in $chromeDriverExtractPath"
           Get-ChildItem -Path $chromeDriverExtractPath
 
-          # Check if chromedriver.exe exists inside chromedriver-win64 folder
-          if (Test-Path "$chromeDriverExtractPath\chromedriver-win64\chromedriver.exe") {
-              Write-Host "Moving chromedriver.exe from chromedriver-win64 folder..."
-              Move-Item "$chromeDriverExtractPath\chromedriver-win64\chromedriver.exe" "$chromeDriverExtractPath\chromedriver.exe"
-              Remove-Item -Recurse -Force "$chromeDriverExtractPath\chromedriver-win64"  # Clean up the folder
+          # Check if chromedriver.exe exists in the main directory and remove it
+          if (Test-Path "$chromeDriverExtractPath\chromedriver.exe") {
+              Write-Host "Removing existing chromedriver.exe..."
+              Remove-Item "$chromeDriverExtractPath\chromedriver.exe" -Force
           }
+
+          # Now move the new chromedriver.exe from the chromedriver-win64 folder to the main directory
+          Write-Host "Moving chromedriver.exe from chromedriver-win64 folder..."
+          Move-Item "$chromeDriverExtractPath\chromedriver-win64\chromedriver.exe" "$chromeDriverExtractPath\chromedriver.exe"
+          Remove-Item -Recurse -Force "$chromeDriverExtractPath\chromedriver-win64"  # Clean up the folder
 
           # Add ChromeDriver to PATH (for the current session)
           $env:PATH += ";C:\tools\chromedriver"
