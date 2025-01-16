@@ -1,0 +1,3 @@
+rootProject.name = 'ABS_MISSION'
+include 'mission', 'base-code'
+
