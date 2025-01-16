@@ -12,7 +12,13 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-    
+
+    # Step: Set Execution Policy to Bypass (for all users)
+    - name: Set Execution Policy to Bypass (for all users)
+      run: |
+        Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope LocalMachine -Force
+        echo "Execution Policy Set for all users"
+
     - name: Set up JDK 17
       uses: actions/setup-java@v4
       with:
@@ -69,7 +75,7 @@ jobs:
 
           # Explicitly call chromedriver.exe using its full path to verify installation
           Write-Host "Verifying ChromeDriver installation..."
-          $chromedriverVersion = & "C:\tools\chromedriver\chromedriver.exe" --version
+          $chromedriverVersion = & "$chromeDriverExtractPath\chromedriver.exe" --version
           Write-Host $chromedriverVersion
 
    # Step 6: Grant execute permission for Gradle wrapper (Windows-compatible method)
