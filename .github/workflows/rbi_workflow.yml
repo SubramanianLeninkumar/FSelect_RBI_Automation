@@ -57,6 +57,10 @@ jobs:
           Expand-Archive -Path $chromeDriverZipPath -DestinationPath $chromeDriverExtractPath -Force
           Remove-Item -Path $chromeDriverZipPath  # Clean up the zip file
 
+          # List the files in the extraction folder for debugging
+          Write-Host "Listing files in $chromeDriverExtractPath"
+          Get-ChildItem -Path $chromeDriverExtractPath
+
           # Check if chromedriver_64 folder exists and move chromedriver.exe
           if (Test-Path "$chromeDriverExtractPath\chromedriver_64\chromedriver.exe") {
               Write-Host "Moving chromedriver.exe from chromedriver_64 folder..."
@@ -67,7 +71,7 @@ jobs:
           # Add ChromeDriver to PATH (for the current session)
           $env:PATH += ";C:\tools\chromedriver"
 
-          # Explicitly call chromedriver.exe using its full path to verify installation
+          # Verify ChromeDriver installation
           Write-Host "Verifying ChromeDriver installation..."
           $chromedriverVersion = & "$chromeDriverExtractPath\chromedriver.exe" --version
           Write-Host $chromedriverVersion
@@ -82,4 +86,4 @@ jobs:
     - name: Run Selenium tests
       working-directory: mission
       run: |
-        gradle clean test "-Dsuite.name=rbi_meetinglist" --info
+        gradle clean test "-Dsuite.name=rbi_meetinglist" --info --debug
