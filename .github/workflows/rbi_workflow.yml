@@ -95,4 +95,4 @@ jobs:
     - name: Run Selenium tests
       working-directory: mission
       run: |
-        gradle clean test "-Dsuite.name=rbi_meetinglist" --info
+        gradle clean test "-Dsuite.name=rbi_fullflow" --info
