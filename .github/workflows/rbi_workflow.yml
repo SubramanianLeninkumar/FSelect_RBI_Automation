@@ -30,10 +30,13 @@ jobs:
       run: echo "WORKSPACE=${GITHUB_WORKSPACE}" >> $GITHUB_ENV
 
     # Step 2: Install Chrome on Windows
-    - uses: browser-actions/setup-chrome@v1
-      id: setup-chrome
-    - run: |
-        ${{ steps.setup-chrome.outputs.chrome-path }} --version
+    - name: Install Google Chrome
+      run: |
+        $chromeInstaller = "chrome_installer.exe"
+        Invoke-WebRequest -Uri "https://dl.google.com/chrome/install/latest/chrome_installer.exe" -OutFile $chromeInstaller
+        Start-Process -FilePath $chromeInstaller -Args "/silent /install" -NoNewWindow -Wait
+        Remove-Item $chromeInstaller -Force
+        $env:PATH += ";C:\Program Files\Google\Chrome\Application"
 
     - name: Install Latest Stable ChromeDriver
       run: |
