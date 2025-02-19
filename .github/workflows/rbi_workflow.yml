@@ -30,60 +30,47 @@ jobs:
       run: echo "WORKSPACE=${GITHUB_WORKSPACE}" >> $GITHUB_ENV
 
     # Step 2: Install Chrome on Windows
-    - name: Install Google Chrome
-      run: |
-        $chromeInstaller = "chrome_installer.exe"
-        Invoke-WebRequest -Uri "https://dl.google.com/chrome/install/latest/chrome_installer.exe" -OutFile $chromeInstaller
-        Start-Process -FilePath $chromeInstaller -Args "/silent /install" -NoNewWindow -Wait
-        Remove-Item $chromeInstaller -Force
-        $env:PATH += ";C:\Program Files\Google\Chrome\Application"
+    - uses: browser-actions/setup-chrome@v1
+      id: setup-chrome
+    - run: |
+        ${{ steps.setup-chrome.outputs.chrome-path }} --version
 
     - name: Install Latest Stable ChromeDriver
       run: |
-          # Fetch the latest stable Chrome version dynamically from Chrome for Testing
-          $chromeDriverVersionUrl = "https://googlechromelabs.github.io/chrome-for-testing/LATEST_RELEASE_STABLE"
-          $chromeDriverVersion = Invoke-WebRequest -Uri $chromeDriverVersionUrl -UseBasicParsing | Select-Object -First 1
-          Write-Host "Latest ChromeDriver Version: $chromeDriverVersion"
+        # Fetch the latest stable Chrome version dynamically from Chrome for Testing
+        $chromeDriverVersionUrl = "https://googlechromelabs.github.io/chrome-for-testing/LATEST_RELEASE_STABLE"
+        $chromeDriverVersion = Invoke-WebRequest -Uri $chromeDriverVersionUrl -UseBasicParsing | Select-Object -First 1
+        Write-Host "Latest ChromeDriver Version: $chromeDriverVersion"
 
-          # Construct the download URL for ChromeDriver using the fetched Chrome version
-          $chromeDriverUrl = "https://storage.googleapis.com/chrome-for-testing-public/$chromeDriverVersion/win64/chromedriver-win64.zip"
+        # Construct the download URL for ChromeDriver using the fetched Chrome version
+        $chromeDriverUrl = "https://storage.googleapis.com/chrome-for-testing-public/$chromeDriverVersion/win64/chromedriver-win64.zip"
     
-          # Set temporary paths for download
-          $tempPath = [System.IO.Path]::GetTempPath()
-          $chromeDriverZipPath = Join-Path -Path $tempPath -ChildPath "chromedriver.zip"
-          $chromeDriverExtractPath = "C:\tools\chromedriver"
+        # Set paths for download and extraction
+        $tempPath = [System.IO.Path]::GetTempPath()
+        $chromeDriverZipPath = Join-Path -Path $tempPath -ChildPath "chromedriver.zip"
+        $chromeDriverExtractPath = "C:\tools\chromedriver"
 
-          # Download ChromeDriver
-          Write-Host "Downloading ChromeDriver..."
-          Invoke-WebRequest -Uri $chromeDriverUrl -OutFile $chromeDriverZipPath -UseBasicParsing
-    
-          # Extract ChromeDriver with force overwrite option
-          Write-Host "Extracting ChromeDriver..."
-          Expand-Archive -Path $chromeDriverZipPath -DestinationPath $chromeDriverExtractPath -Force
-          Remove-Item -Path $chromeDriverZipPath  # Clean up the zip file
+        # Download ChromeDriver
+        Write-Host "Downloading ChromeDriver..."
+        Invoke-WebRequest -Uri $chromeDriverUrl -OutFile $chromeDriverZipPath
 
-          # List the files in the extraction folder for debugging
-          Write-Host "Listing files in $chromeDriverExtractPath"
-          Get-ChildItem -Path $chromeDriverExtractPath
+        # Extract ChromeDriver directly to the desired folder
+        Write-Host "Extracting ChromeDriver..."
+        Expand-Archive -Path $chromeDriverZipPath -DestinationPath $chromeDriverExtractPath -Force
+        Remove-Item -Path $chromeDriverZipPath  # Clean up the zip file
 
-          # Check if chromedriver.exe exists in the main directory and remove it
-          if (Test-Path "$chromeDriverExtractPath\chromedriver.exe") {
-              Write-Host "Removing existing chromedriver.exe..."
-              Remove-Item "$chromeDriverExtractPath\chromedriver.exe" -Force
-          }
+        # Move chromedriver.exe directly to the main directory
+        Write-Host "Moving chromedriver.exe..."
+        Move-Item "$chromeDriverExtractPath\chromedriver-win64\chromedriver.exe" "$chromeDriverExtractPath\chromedriver.exe"
+        Remove-Item -Recurse -Force "$chromeDriverExtractPath\chromedriver-win64"  # Clean up the folder
 
-          # Now move the new chromedriver.exe from the chromedriver-win64 folder to the main directory
-          Write-Host "Moving chromedriver.exe from chromedriver-win64 folder..."
-          Move-Item "$chromeDriverExtractPath\chromedriver-win64\chromedriver.exe" "$chromeDriverExtractPath\chromedriver.exe"
-          Remove-Item -Recurse -Force "$chromeDriverExtractPath\chromedriver-win64"  # Clean up the folder
+        # Add ChromeDriver to PATH (for the current session)
+        $env:PATH += ";C:\tools\chromedriver"
 
-          # Add ChromeDriver to PATH (for the current session)
-          $env:PATH += ";C:\tools\chromedriver"
-
-          # Verify ChromeDriver installation
-          Write-Host "Verifying ChromeDriver installation..."
-          $chromedriverVersion = & "C:\tools\chromedriver\chromedriver.exe" --version
-          Write-Host $chromedriverVersion
+        # Verify ChromeDriver installation
+        Write-Host "Verifying ChromeDriver installation..."
+        $chromedriverVersion = & "C:\tools\chromedriver\chromedriver.exe" --version
+        Write-Host "ChromeDriver Version: $chromedriverVersion"
 
    # Step 6: Grant execute permission for Gradle wrapper (Windows-compatible method)
     - name: Grant execute permission for Gradle wrapper (Windows)
